@@ -11,6 +11,8 @@ curl -o cr.yaml https://raw.githubusercontent.com/Dynatrace/dynatrace-oneagent-o
 sed -i "s/https:\/\/ENVIRONMENTID.live.dynatrace.com\/api/https:\/\/$DT_ENVIRONMENT_ID.live.dynatrace.com\/api/g" cr.yaml
 kubectl apply -f cr.yaml
 
+sleep 30
+
 # Deploy Ingress Controller
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.0/deploy/static/provider/aws/deploy.yaml
 
