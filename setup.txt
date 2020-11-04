@@ -1,0 +1,17 @@
+# Install k3s and Dynatrace OneAgent
+export DT_API_TOKEN=***
+export DT_PAAS_TOKEN=***
+export DT_ENVIRONMENT_ID=***
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.18.3+k3s1 K3S_KUBECONFIG_MODE="644" sh -s - --no-deploy=traefik
+kubectl create namespace dynatrace
+kubectl -n dynatrace create secret generic oneagent --from-literal="apiToken=$DT_API_TOKEN" --from-literal="paasToken=$DT_PAAS_TOKEN"
+kubectl apply -f https://github.com/Dynatrace/dynatrace-oneagent-operator/releases/latest/download/kubernetes.yaml
+curl -o cr.yaml https://raw.githubusercontent.com/Dynatrace/dynatrace-oneagent-operator/master/deploy/cr.yaml
+sed -i "s/https:\/\/ENVIRONMENTID.live.dynatrace.com\/api/https:\/\/$DT_ENVIRONMENT_ID.live.dynatrace.com\/api/g" cr.yaml
+kubectl apply -f cr.yaml
+
+# Deploy Ingress Controller
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.0/deploy/static/provider/aws/deploy.yaml
+
+# Deploy customers & ingress rules
+kubectl apply -f deploy-customer1.yaml -f deploy-customer2.yaml -f deploy-customer3.yaml
