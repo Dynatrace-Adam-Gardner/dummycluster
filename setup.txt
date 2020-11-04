@@ -1,4 +1,5 @@
 # Install k3s and Dynatrace OneAgent
+# DT_API_TOKEN needs "access problems", "read config" and "write config" permissions
 export DT_API_TOKEN=***
 export DT_PAAS_TOKEN=***
 export DT_ENVIRONMENT_ID=***
