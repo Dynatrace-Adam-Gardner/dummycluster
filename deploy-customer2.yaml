@@ -48,13 +48,12 @@ kind: Ingress
 metadata:
   name: customer2-ingress
   namespace: customer2
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - http:
+  - host: customer2.INGRESS-PLACEHOLDER
+    http:
       paths:
-      - path: /cust2
+      - path: /
         pathType: Prefix
         backend:
           serviceName: web
