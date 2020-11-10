@@ -16,5 +16,7 @@ sleep 30
 # Deploy Ingress Controller
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.0/deploy/static/provider/aws/deploy.yaml
 
+
 # Deploy customers & ingress rules
+# TODO: Replace Ingress placeholder with subdomain.ipaddress.nip.io for each YAML.
 kubectl apply -f deploy-customer1.yaml -f deploy-customer2.yaml -f deploy-customer3.yaml
