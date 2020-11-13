@@ -17,10 +17,10 @@ curl -o cr.yaml https://raw.githubusercontent.com/Dynatrace/dynatrace-oneagent-o
 sed -i "s@apiUrl.*@apiUrl: $DT_URL@g" cr.yaml
 kubectl apply -f cr.yaml
 
-sleep 30
-
 # Deploy Ingress Controller
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.0/deploy/static/provider/aws/deploy.yaml
+
+sleep 30
 
 # Deploy customers & ingress rules
 # TODO: Replace Ingress placeholder with subdomain.ipaddress.nip.io for each YAML.
