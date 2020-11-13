@@ -28,6 +28,9 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 80
+          env:
+            - name: DT_CUSTOM_PROP
+              value: "Version=v1"
 
 ---
 apiVersion: v1
