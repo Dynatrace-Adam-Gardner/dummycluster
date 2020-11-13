@@ -7,12 +7,14 @@ export DT_PAAS_TOKEN=***
 export DT_URL=***
 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE
+export VM_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.18.3+k3s1 K3S_KUBECONFIG_MODE="644" sh -s - --no-deploy=traefik
 kubectl create namespace dynatrace
 kubectl -n dynatrace create secret generic oneagent --from-literal="apiToken=$DT_API_TOKEN" --from-literal="paasToken=$DT_PAAS_TOKEN"
 kubectl apply -f https://github.com/Dynatrace/dynatrace-oneagent-operator/releases/latest/download/kubernetes.yaml
 curl -o cr.yaml https://raw.githubusercontent.com/Dynatrace/dynatrace-oneagent-operator/master/deploy/cr.yaml
-sed -i "s/https:\/\/ENVIRONMENTID.live.dynatrace.com\/api/$DT_URL/g" cr.yaml
+# Replace line beginning with apiUrl with apiUrl: "DT_URL"
+sed -i "s@apiUrl.*@apiUrl: $DT_URL@g" cr.yaml
 kubectl apply -f cr.yaml
 
 sleep 30
@@ -20,7 +22,15 @@ sleep 30
 # Deploy Ingress Controller
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.0/deploy/static/provider/aws/deploy.yaml
 
-
 # Deploy customers & ingress rules
 # TODO: Replace Ingress placeholder with subdomain.ipaddress.nip.io for each YAML.
+sed -i "s@- host: customer1.INGRESS-PLACEHOLDER@- host: customer1.$VM_IP.nip.io@g" deploy-customer1.yaml
+sed -i "s@- host: customer2.INGRESS-PLACEHOLDER@- host: customer2.$VM_IP.nip.io@g" deploy-customer2.yaml
+sed -i "s@- host: customer3.INGRESS-PLACEHOLDER@- host: customer3.$VM_IP.nip.io@g" deploy-customer3.yaml
 kubectl apply -f deploy-customer1.yaml -f deploy-customer2.yaml -f deploy-customer3.yaml
+
+sleep 10
+
+curl -s http://customer1.$VM_IP.nip.io
+curl -s http://customer2.$VM_IP.nip.io
+curl -s http://customer2.$VM_IP.nip.io
